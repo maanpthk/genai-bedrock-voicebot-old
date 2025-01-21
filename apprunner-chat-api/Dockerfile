@@ -1,20 +1,22 @@
-# Use the official Node.js image as the base image
-FROM node:18
+FROM node:18-slim
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if available) to the working directory
+# Copy package files
 COPY package*.json ./
 
-# Install the application dependencies
-RUN npm install
+# Install dependencies
+RUN npm ci --only=production
 
-# Copy the rest of the application code to the working directory
+# Copy application code
 COPY . .
 
-# Expose the port that the application will run on
-EXPOSE 3000
+# Expose correct port
+EXPOSE 8080
 
-# Define the command to run the application
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+# Start the application
 CMD ["node", "index.js"]
