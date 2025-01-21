@@ -591,9 +591,9 @@ export class QChatApi extends Construct {
           codeConfiguration: {
             configurationSource: 'API',
             codeConfigurationValues: {
-              runtime: 'NODEJS_14',
-              buildCommand: 'npm install',
-              startCommand: 'npm start',
+              runtime: 'NODEJS_18',
+              buildCommand: 'npm ci --only=production',
+              startCommand: 'node index.js',
               port: '8080',
               runtimeEnvironmentSecrets: [
                 {
@@ -619,6 +619,14 @@ export class QChatApi extends Construct {
           },
         },
       },
+      healthCheckConfiguration: {
+    protocol: 'TCP',
+    path: '/health',
+    interval: 10,
+    timeout: 5,
+    healthyThreshold: 2,
+    unhealthyThreshold: 2
+  },
       instanceConfiguration: {
         instanceRoleArn: appRunnerRole.roleArn,
       }
